@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+	--cbelight-primary: #1e40af;
+	--cbelight-gold: #D4AF37;
+	--cbelight-white: #ffffff;
+}
+
+html,body,#root{height:100%}
+
+.card-surface{
+	background: var(--cbelight-white);
+	border-radius: 0.5rem;
+	box-shadow: 0 6px 18px rgba(30,64,175,0.08);
+}
+
+.gold-accent{
+	color: var(--cbelight-gold);
+	transition: all 220ms ease;
+}
