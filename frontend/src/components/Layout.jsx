@@ -3,35 +3,70 @@ import { useState, useRef, useEffect } from 'react'
 
 function Navbar({ onLogout }) {
   const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null
+  const [mobileOpen, setMobileOpen] = useState(false)
+
   return (
-    <nav className="bg-cbelight-primary text-white p-4 flex items-center justify-between shadow-md">
-      <div className="flex items-center gap-6">
-        <Link to="/" className="font-extrabold text-xl tracking-wide">Home</Link>
-        <Link to="/register" className="hover:underline">Register</Link>
-        <Link to="/dashboard" className="hover:underline">Dashboard</Link>
-      </div>
-      <div>
-        {user ? (
-          <div className="relative">
-            <div className="flex items-center gap-3">
-              {/* <span className="text-sm">Welcome, <span className="font-medium">{user.firstName}</span></span> */}
-              <UserMenu user={user} onLogout={onLogout} />
+    <nav className="bg-cbelight-primary text-white p-4 shadow-md">
+      <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            aria-label="menu"
+            onClick={() => setMobileOpen(v => !v)}
+            className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-md bg-white text-cbelight-primary font-semibold shadow-sm hover:scale-105 transition-transform"
+          >
+            ☰
+          </button>
+          <Link to="/" className="font-extrabold text-xl tracking-wide">Home</Link>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-6">
+          <Link to="/register" className="hover:underline">Register</Link>
+          <Link to="/dashboard" className="hover:underline">Dashboard</Link>
+        </div>
+
+        <div>
+          {user ? (
+            <div className="relative">
+              <div className="flex items-center gap-3">
+                <UserMenu user={user} onLogout={onLogout} />
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-4">
-            <Link to="/signup" className="hover:underline">Signup</Link>
-            <Link to="/login" className="hover:underline">Login</Link>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link to="/signup" className="hover:underline">Signup</Link>
+              <Link to="/login" className="hover:underline">Login</Link>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Mobile dropdown */}
+      {mobileOpen && (
+        <div className="sm:hidden mt-2 px-4 pb-4">
+          <div className="bg-white text-cbelight-primary rounded-md shadow-sm overflow-hidden">
+            <Link to="/register" className="block px-4 py-3 border-b">Register</Link>
+            <Link to="/dashboard" className="block px-4 py-3 border-b">Dashboard</Link>
+            <Link to="/signup" className="block px-4 py-3 border-b">Signup</Link>
+            <Link to="/login" className="block px-4 py-3">Login</Link>
+          </div>
+        </div>
+      )}
     </nav>
+  )
+}
+
+function MobileMenuButton() {
+  // simple placeholder for visual mobile affordance (no drawer implemented here)
+  return (
+    <button aria-label="menu" className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-md bg-white text-cbelight-primary font-semibold shadow-sm hover:scale-105 transition-transform">
+      ☰
+    </button>
   )
 }
 
 function Sidebar() {
   return (
-    <aside className="w-56 p-4 border-r border-gray-100">
+    <aside className="hidden md:block md:w-56 p-4 border-r border-gray-100">
       <ul className="space-y-3">
         <li>
           <a

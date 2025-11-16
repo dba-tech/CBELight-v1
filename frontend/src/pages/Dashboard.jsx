@@ -66,7 +66,7 @@ export default function Dashboard() {
   const data = (stats.byDepartment || []).map(d => ({ name: d._id || 'Unknown', value: d.count }))
   const total = stats.total || data.reduce((s, x) => s + x.value, 0)
 
-  const colors = ['#1e40af', '#60a5fa', '#0ea5a2', '#D4AF37', '#2563eb']
+  const colors = ['#1e40af', '#7dace6ff', '#036664ff', '#D4AF37', '#010715ff']
 
   return (
     <div className="space-y-6">
