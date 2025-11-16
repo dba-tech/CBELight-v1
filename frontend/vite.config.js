@@ -22,4 +22,14 @@ export default defineConfig({
     globals: true,
     include: ["src/**/*test.{js,jsx}"],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          chart: ['recharts'],
+          auth: ['axios', 'jwt-decode']
+        }
+      }
+    }
+  }
 });
