@@ -10,58 +10,70 @@ export default function Dashboard() {
   const [registrations, setRegistrations] = useState([])
   const [loadingRegs, setLoadingRegs] = useState(true)
 
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        const res = await axios.get('/api/registrations/stats')
-        setStats(res.data)
-      } catch (err) {
-        console.error(err)
-      }
+useEffect(() => {
+  async function fetchStats() {
+    try {
+      const res = await axios.get('/api/registrations/stats');
+      setStats(res.data);
+    } catch (err) {
+      console.error(err);
     }
+  }
 
-    async function fetchRegistrations() {
-      try {
-        const res = await axios.get('/api/registrations')
-        setRegistrations(res.data || [])
-        setLoadingRegs(false)
-      } catch (err) {
-        console.error(err)
-        setLoadingRegs(false)
-      }
+  async function fetchRegistrations() {
+    try {
+      const res = await axios.get('/api/registrations');
+      setRegistrations(res.data || []);
+      setLoadingRegs(false);
+    } catch (err) {
+      console.error(err);
+      setLoadingRegs(false);
     }
+  }
 
-    fetchStats()
-    fetchRegistrations()
-    const id = setInterval(fetchStats, 10000)
+  fetchStats();
+  fetchRegistrations();
+  const id = setInterval(fetchStats, 10000);
 
-    // try to connect socket.io for real-time updates
-    let socket
-    ;(async () => {
-      try {
-        const mod = await import('socket.io-client')
-        const io = mod.io || mod.default
-        const base = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-        socket = io(base)
-        socket.on('registration:created', () => {
-          fetchStats()
-          fetchRegistrations()
-        })
-        socket.on('registration:updated', () => {
-          fetchStats()
-          fetchRegistrations()
-        })
-      } catch (err) {
-        // socket not available in this environment
-        // console.warn('Socket not available', err)
+  // ✅ Refined Socket.io connection
+  let socket;
+  (async () => {
+    try {
+      const mod = await import('socket.io-client');
+      const io = mod.io || mod.default;
+      const base = import.meta.env.VITE_API_URL;
+
+      if (!base) {
+        console.warn('VITE_API_URL is not defined');
+        return;
       }
-    })()
 
-    return () => {
-      clearInterval(id)
-      try { if (socket) socket.disconnect() } catch(e){}
+      socket = io(base, {
+        transports: ['websocket'],
+        withCredentials: true
+      });
+
+      socket.on('registration:created', () => {
+        fetchStats();
+        fetchRegistrations();
+      });
+
+      socket.on('registration:updated', () => {
+        fetchStats();
+        fetchRegistrations();
+      });
+    } catch (err) {
+      console.warn('Socket.io connection failed', err);
     }
-  }, [])
+  })();
+
+  return () => {
+    clearInterval(id);
+    try {
+      if (socket) socket.disconnect();
+    } catch (e) {}
+  };
+}, []);
 
   const data = (stats.byDepartment || []).map(d => ({ name: d._id || 'Unknown', value: d.count }))
   const total = stats.total || data.reduce((s, x) => s + x.value, 0)
