@@ -1,12 +1,12 @@
 // public/service-worker.js
-const CACHE_NAME = 'app-cache-v1';
+const CACHE_NAME = 'app-cache-v2';
 const OFFLINE_URL = '/';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-192-v2.png',
+  '/icons/icon-512-v2.png'
 ];
 
 // Install - pre-cache core assets
